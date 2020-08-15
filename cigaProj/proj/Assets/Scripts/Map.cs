@@ -16,16 +16,6 @@ using UnityEngine.EventSystems;
 
 namespace GameLogic.Lua
 {
-	//public enum CellType
-	//{
-	//	None,
-	//	Start,
-	//	End,
-	//	Room,
-	//	Hallway,
-	//	Side,
-	//}
-
 	public enum CampType
 	{
 		LEFT,

@@ -60,7 +60,7 @@ namespace GameLogic.Lua
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
 
             messageObj.SetActive(false);
-
+            systemPromptTxt.gameObject.SetActive(false);
         }
 
         private void OnClickPlayHandler()

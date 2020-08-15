@@ -146,6 +146,7 @@ namespace GameLogic.Lua
 
 		private void TaskComplete()
 		{
+			m_isCompeteSetTask = false;
 			gameObject.SetColor(m_originalColor);
 		}
 
