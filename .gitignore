@@ -1,1 +1,10 @@
-ProjectSettings
+cigaProj/proj/ProjectSettings
+cigaProj/proj/.vs/proj/v16/.suo
+cigaProj/proj/Library
+cigaProj/proj/Logs
+cigaProj/proj/obj
+cigaProj/proj/Packages
+cigaProj/proj/Temp
+cigaProj/proj/Assembly-CSharp.csproj
+cigaProj/proj/Assembly-CSharp-Editor.csproj
+cigaProj/proj/proj.sln
