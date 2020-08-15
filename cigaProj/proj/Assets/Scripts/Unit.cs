@@ -24,9 +24,18 @@ namespace GameLogic.Lua
 		Skill,
 	}
 
+	public enum UnitType
+	{
+		None,
+		Original,
+		Clone,
+	}
+
 	public class Unit : MonoBehaviour
 	{
 		public int index;
+
+		public UnitType unitType = UnitType.Original;
 
 		public Vector2Int curPos { get; private set; }
 
@@ -44,21 +53,88 @@ namespace GameLogic.Lua
 
 		private Renderer m_renderer;
 
-		private object m_taskParam;
-		private TaskType m_taskType;
+		//private object m_taskParam;
+		//private TaskType m_taskType;
 		private bool m_isCompeteSetTask;
 
+		private Color m_originalColor;
+
+		public int ability = 3;
+
 		public bool selected { get; private set; }
+
+		private Queue<Task> m_taskQueues;
+		public Queue<Task> taskQueues 
+		{ 
+			get 
+			{
+				if (unitType != UnitType.Clone)
+				{
+					return m_taskQueues;
+				}
+				return parentUnit.m_taskQueues;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Unit parentUnit { get; set; }
+
+		private List<Unit> m_childrenUnits = new List<Unit>();
+
+		public List<Unit> childrenUnits 
+		{ 
+			get
+			{
+				if (unitType != UnitType.Clone)
+				{
+					return m_childrenUnits;
+				}
+				return parentUnit.childrenUnits;
+			}
+		}
+
+		public void AddChild(Unit unit)
+		{
+			childrenUnits.Add(unit);
+		}
+
 		public void Init(Vector2Int pos)
 		{
+			m_taskQueues = new Queue<Task>(3);
 			curPos = pos;
 			m_renderer = GetComponent<Renderer>();
 			m_originalColor = m_renderer.material.color;
 		}
 
-		private Color m_originalColor;
+		public bool PushTask(Task task)
+		{
+			if (unitType != UnitType.Clone)
+			{
+				if (!m_isCompeteSetTask)
+				{
+					m_taskQueues.Enqueue(task);
 
-		public int ability = 3;
+					task.index = m_taskQueues.Count;
+					task.ShowSimulation();
+
+					if (m_taskQueues.Count >= ability)
+					{
+						m_isCompeteSetTask = true;
+						return m_isCompeteSetTask;
+					}
+				}
+				return false;
+			}
+			else
+			{
+				if (parentUnit != null)
+					return parentUnit.PushTask(task);
+				else
+					return true;
+			}
+		}
 
 		public void Selected()
 		{
@@ -81,127 +157,35 @@ namespace GameLogic.Lua
 			}
 		}
 
-		public void SetTask(TaskType taskType,object param)
-		{
-			m_taskType = taskType;
-			m_taskParam = param;
+		//public void SetTask(TaskType taskType,object param)
+		//{
+		//	//m_taskType = taskType;
+		//	//m_taskParam = param;
 
-			gameObject.SetColor(Color.green);
-			m_isCompeteSetTask = true;
-		}
+		//	gameObject.SetColor(Color.green);
+		//	m_isCompeteSetTask = true;
+		//}
 
 		public void Play()
 		{
-			switch (m_taskType)
+			if (m_taskQueues.Count > 0)
 			{
-				case TaskType.Move:
-					PlayMove();
-					break;
-				case TaskType.Attack:
-					PlayAttack();
-					break;
-				case TaskType.Skill:
-					PlaySkill();
-					break;
-				default:
+				Task task = m_taskQueues.Dequeue();
+				task.Play(() =>
+				{
+					Play();
+				});
+			}
+			else
+			{
+				//m_taskType = TaskType.None;
+				curPos = transform.position.ToVector2Int();
+				m_isCompeteSetTask = false;
+				gameObject.SetColor(m_originalColor);
 
-					break;
+				Debug.LogError("Task Queue Finished.");
 			}
 		}
-
-		private void PlayMove()
-		{
-			Vector2Int[]  paths = m_taskParam as Vector2Int[];
-			if (paths != null)
-			{
-				Vector3[] path3 = paths.Select((Vector2Int pos, int idx) => { return pos.ToVector3(1.5f); }).ToArray();
-				Tweener tweener = transform.DOPath(path3, 1).SetSpeedBased().SetEase(Ease.Linear);
-				tweener.OnComplete(OnMoveCompleteHandler);
-				tweener.OnWaypointChange(OnMoveStepCompleteHandler);
-			}
-		}
-
-		private void OnMoveStepCompleteHandler(int value)
-		{
-			Debug.LogError("OnMoveStepCompleteHandler value = "+ value.ToString());
-		}
-
-        private void OnMoveCompleteHandler()
-        {
-			Debug.LogError("OnMoveCompleteHandler");
-			TaskComplete();
-		}
-
-        private void PlayAttack()
-		{ 
-		
-		}
-
-		private void PlaySkill()
-		{
-
-		}
-
-		private void TaskComplete()
-		{
-			m_taskType = TaskType.None;
-			curPos = transform.position.ToVector2Int();
-			m_isCompeteSetTask = false;
-			gameObject.SetColor(m_originalColor);
-		}
-
-		//private void SetDestination(Vector2Int[] path, System.Action action)
-		//{
-		//	m_index = 0;
-		//	m_action = action;
-		//	if (TryGetTargetPos(out Vector3 pos))
-		//	{
-		//		m_targetPos = pos;
-		//		isMoving = true;
-		//	}
-		//}
-
-		//private bool TryGetTargetPos(out Vector3 vector3)
-		//{
-		//	if (m_pathVectors != null)
-		//	{
-		//		if (m_index < m_pathVectors.Length)
-		//		{
-		//			Vector2Int vector2 = m_pathVectors[m_index++];
-		//			vector3 = new Vector3(vector2.x, 0, vector2.y);
-		//			return true;
-		//		}
-		//	}
-		//	vector3 = Vector3.zero;
-		//	return false;
-		//}
-
-		// Update is called once per frame
-		//void Update()
-		//{
-		//	if (isMoving)
-		//	{
-		//		if (Vector3.Distance(transform.position, m_targetPos) > 0.1f)
-		//		{
-		//			m_targetPos.y = transform.position.y;
-		//			transform.position = Vector3.Lerp(transform.position, m_targetPos, Time.deltaTime * speed);
-		//		}
-		//		else
-		//		{
-		//			curPos = m_targetPos.ToVector2Int();
-		//			if (TryGetTargetPos(out Vector3 pos))
-		//			{
-		//				m_targetPos = pos;
-		//			}
-		//			else
-		//			{
-		//				isMoving = false;//移动结束
-		//				m_action?.Invoke();
-		//			}
-		//		}
-		//	}
-		//}
-
 
 		public void ShowGrid(int ability)
 		{

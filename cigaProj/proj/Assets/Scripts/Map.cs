@@ -10,6 +10,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -47,7 +49,16 @@ namespace GameLogic.Lua
 		{
 			gameObject.SetColor(colors.Peek());
 		}
-	}
+
+		public void ClearTileColor()
+        {
+			while (colors.Count > 1)
+			{
+				colors.Pop();
+			}
+			SetColor();
+        }
+    }
 
 	public class Map : MonoBehaviour
 	{
@@ -71,7 +82,7 @@ namespace GameLogic.Lua
 
 		private Move m_move;
 
-		public Dictionary<string , Unit> m_units;
+		public Dictionary<string , Stack< Unit>> m_units;
 
 		//public UnityEngine.AI.NavMeshSurface navMeshSurface;
 
@@ -106,18 +117,44 @@ namespace GameLogic.Lua
 			Show(sceneSize, blueCamps, redCamps);
 		}
 
+		public void AddUnit(Unit unit)
+		{
+			if (m_units.TryGetValue(unit.uniqueId, out Stack<Unit> units))
+			{
+				units.Push(unit);
+			}
+		}
+
+		public bool TryGetUnit(Vector2Int pos, out Unit unit)
+		{
+			foreach (var item in m_units)
+			{
+				Unit[] units = item.Value.ToArray();
+				for (int i = 0; i < units.Length; i++)
+				{
+					if (units[i].curPos == pos)
+					{
+						unit = units[i];
+						return true;
+					}
+				}
+			}
+			unit = null;
+			return false;
+		}
+
 		public Unit GetUnit(string key)
 		{
-			if (m_units.TryGetValue(key, out Unit unit))
+			if (m_units.TryGetValue(key, out Stack<Unit> stack))
 			{
-				return unit;
+				return stack.Peek();
 			}
 			return null;
 		}
 
 		public void Show(Vector2Int mapSize , Vector2Int[] blueCamp , Vector2Int[] redCamp)
 		{
-			m_units = new Dictionary<string, Unit>();
+			m_units = new Dictionary<string, Stack<Unit>>();
 			m_grid = new Grid2D<Tile>(mapSize, Vector2Int.zero);
 
 			m_aStar = new DungeonPathfinder2D(mapSize);
@@ -131,8 +168,32 @@ namespace GameLogic.Lua
 		{
 			foreach (var item in m_units)
 			{
-				item.Value.Play();
+				item.Value.Peek().Play();
 			}
+		}
+
+		public void Hide()
+		{
+			foreach (var item in m_units)
+			{
+				while (item.Value.Count > 1)
+				{
+					item.Value.Pop();// 弹出所有克隆单位,保留原始单位
+				}
+
+				{
+					Unit unit = item.Value.Peek();
+					int total = unit.taskQueues.Count;
+					for (int i = 0; i < total; i++)
+					{
+						Task task = unit.taskQueues.Dequeue();
+						task.HideSumulation();
+						unit.taskQueues.Enqueue(task);
+					}
+				}
+			}
+
+			ClearTileColor();
 		}
 
 		public int GetIndex(Vector2Int pos)
@@ -154,7 +215,9 @@ namespace GameLogic.Lua
 				unit.index = GetIndex(blueCamps[i]);
 				unit.campType = CampType.LEFT;
 				unit.uniqueId = (CampType.LEFT.ToString() + i.ToString());
-				m_units.Add(unit.uniqueId, unit);
+				Stack<Unit> stackUnits = new Stack<Unit>();
+				stackUnits.Push(unit);
+				m_units.Add(unit.uniqueId, stackUnits);
 			}
 
 			for (int i = 0; i < redCamps.Length; i++)
@@ -166,7 +229,9 @@ namespace GameLogic.Lua
 				unit.index = GetIndex(redCamps[i]);
 				unit.campType = CampType.RIGHT;
 				unit.uniqueId = (CampType.RIGHT.ToString() + i.ToString());
-				m_units.Add(unit.uniqueId, unit);
+				Stack<Unit> stackUnits = new Stack<Unit>();
+				stackUnits.Push(unit);
+				m_units.Add(unit.uniqueId, stackUnits);
 			}
 
 			//Vector2Int center = new Vector2Int(Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.z));
@@ -305,49 +370,84 @@ namespace GameLogic.Lua
 
                     if (LayerMask.LayerToName(layer) == "Tile")
                     {
+						Vector2Int target = click.ToVector2Int();
 						Unit selectedUnit = null;
 						foreach (var item in m_units)
 						{
-							if (item.Value.selected)
+							if (item.Value.Peek().selected)
 							{
-								selectedUnit = item.Value;
-								break;
+								selectedUnit = item.Value.Peek();
+							}
+							if (item.Value.Peek().curPos == target)
+							{
+								API.GameEvent.Send(GameEvent.SystemTxt, "无法移动到目标点");
+								return;
 							}
 						}
 
 						if (selectedUnit != null)
 						{
-							Vector2Int target = click.ToVector2Int();
 							if (CheckMove(selectedUnit, target))
 							{
 								List<Vector2Int> paths = m_aStar.FindPath(selectedUnit.curPos, target, OnCalculatePathCostHandler);
 
-								for (int i = 0; i < paths.Count; i++)
-								{
-									SetBoxColor(paths[i], UnityEngine.Color.green);
-								}
+								//for (int i = 0; i < paths.Count; i++)
+								//{
+								//	SetBoxColor(paths[i], UnityEngine.Color.green);
+								//}
+								DrawPath(paths.ToArray(), UnityEngine.Color.green);
 
+								MainPanel.Instance.ShowMessageBox("确定行走吗?", (value) =>
+							   {
+								   if (value)
+								   {
+									   Unit parentRoot;
+									   if (selectedUnit.unitType == UnitType.Clone)
+									   {
+										   parentRoot = selectedUnit.parentUnit;
+									   }
+									   else
+									   {
+										   parentRoot = selectedUnit;
+									   }
+									   if (selectedUnit.PushTask(new MoveTask(parentRoot, paths.ToArray(), target)))
+									   {
+										   selectedUnit.UnSelected();
 
-								MainPanel.Instance.ShowMessageBox("确定行走吗?" , (value)=> 
-								{
-									if (value)
-									{
-										selectedUnit.UnSelected();
-										selectedUnit.SetTask(TaskType.Move, paths.ToArray());
+										   for (int i = 0; i < selectedUnit.childrenUnits.Count; i++)
+										   {
+											   selectedUnit.childrenUnits[i].UnSelected();
+										   }
 
-										for (int i = 0; i < paths.Count; i++)
-										{
-											RevertColor(paths[i]);
-										}
-									}
-									else
-									{
-										for (int i = 0; i < paths.Count; i++)
-										{
-											RevertColor(paths[i]);
-										}
-									}
-								});
+										   for (int i = 0; i < paths.Count; i++)
+										   {
+											   RevertColor(paths[i]);
+										   }
+										   Unit parent = selectedUnit.parentUnit;
+										   if (parent != null)
+										   {
+											   parent = selectedUnit.parentUnit;
+										   }
+										   int total = parent.taskQueues.Count;
+										   for (int i = 0; i < total; i++)
+										   {
+											   Task moveTask = parent.taskQueues.Dequeue();
+											   if (moveTask is MoveTask)
+											   {
+												   DrawPath((moveTask as MoveTask).paths, UnityEngine.Color.green);
+											   }
+											   parent.taskQueues.Enqueue(moveTask);
+										   }
+									   }
+								   }
+								   else
+								   {
+									   for (int i = 0; i < paths.Count; i++)
+									   {
+										   RevertColor(paths[i]);
+									   }
+								   }
+							   });
 							}
 							else
 							{
@@ -385,6 +485,13 @@ namespace GameLogic.Lua
 			return pathCost;
 		}
 
+		private void DrawPath(Vector2Int[] vector2Ints , Color color)
+		{
+			for (int i = 0; i < vector2Ints.Length; i++)
+			{
+				SetBoxColor(vector2Ints[i], color);
+			}
+		}
 
         private void SetBoxColor(Vector2Int vector2Int, UnityEngine.Color color)
         {
@@ -393,6 +500,25 @@ namespace GameLogic.Lua
                 m_grid[vector2Int.x, vector2Int.y].SetColor(color);
             }
         }
+
+		private void ClearTileColor()
+		{
+			for (int i = 0; i < sceneSize.x; i++)
+			{
+				for (int j = 0; j < sceneSize.y; j++)
+				{
+					ClearTileColor(new Vector2Int(i, j));
+				}
+			}
+		}
+
+		private void ClearTileColor(Vector2Int vector2Int)
+		{
+			if (m_grid.InBounds(vector2Int))
+			{
+				m_grid[vector2Int.x, vector2Int.y].ClearTileColor();
+			}
+		}
 
 		private void RevertColor(Vector2Int vector2Int)
 		{
@@ -445,5 +571,13 @@ public static class Extends
 	{
 		Renderer renderer = gameObject.GetComponent<Renderer>();
 		renderer.material.color = color;
+	}
+
+	public static void SetAlpha(this GameObject gameObject, float alpha)
+	{
+		Renderer renderer = gameObject.GetComponent<Renderer>();
+		Color oColor = renderer.material.color;
+		oColor.a = alpha;
+		renderer.material.color = oColor;
 	}
 }

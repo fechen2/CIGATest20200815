@@ -21,10 +21,12 @@ namespace GameLogic.Lua
 		public Button leftButtonA;
 		public Button leftButtonB;
 		public Button leftButtonC;
+        public Button leftClear;
 
 		public Button rightButtonA;
 		public Button rightButtonB;
 		public Button rightButtonC;
+        public Button rightClear;
 
         public Button playButton;
 
@@ -58,10 +60,18 @@ namespace GameLogic.Lua
             leftButtonA.onClick.AddListener(OnClickLeftAButtonAHandler);
 			leftButtonB.onClick.AddListener(OnClickLeftBButtonAHandler);
 			leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
+            leftClear.onClick.AddListener(() =>
+            {
+                Map.Instance.Hide();
+            });
 
-			rightButtonA.onClick.AddListener(OnClickRightAButtonAHandler);
+            rightButtonA.onClick.AddListener(OnClickRightAButtonAHandler);
 			rightButtonB.onClick.AddListener(OnClickRightBButtonAHandler);
 			rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
+            rightClear.onClick.AddListener(() =>
+            {
+                Map.Instance.Hide();
+            });
 
             buttonSure.onClick.AddListener(OnClickSureHandler);
             buttonCannel.onClick.AddListener(OnClickCannelHandler);
