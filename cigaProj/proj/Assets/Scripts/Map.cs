@@ -26,6 +26,27 @@ namespace GameLogic.Lua
 	{
 		public GameObject gameObject;
 		public Vector2Int position;
+		public Stack<Color> colors = new Stack<Color>();
+
+		public void SetColor(Color color)
+		{
+			colors.Push(color);
+			SetColor();
+		}
+
+		public void RevertColor()
+		{
+			if (colors.Count > 1)
+			{
+				colors.Pop();
+			}
+			SetColor();
+		}
+
+		private void SetColor()
+		{
+			gameObject.SetColor(colors.Peek());
+		}
 	}
 
 	public class Map : MonoBehaviour
@@ -167,7 +188,7 @@ namespace GameLogic.Lua
 			Vector2Int[] vector2s = GetIndexs(unit.curPos, new Vector2Int(unit.ability, unit.ability), 3);
 			foreach (var item in vector2s)
 			{
-				SetBoxColor(item, UnityEngine.Color.clear);
+				RevertColor(item);
 			}
 		}
 
@@ -257,15 +278,17 @@ namespace GameLogic.Lua
 			box.transform.position = pos;
 			box.transform.SetParent(transform);
 			m_grid[x, y] = new Tile() { position = new Vector2Int(x, y), gameObject = box };
+			m_grid[x, y].SetColor(Color.black);
 		}
 
 		private void DrawGreyBox(int x, int y)
 		{
 			Vector3 pos = new Vector3(x, 0, y);
-			GameObject box = GameObject.Instantiate(greyBox);
+			GameObject box = GameObject.Instantiate(blackBox);
 			box.transform.position = pos;
 			box.transform.SetParent(transform);
 			m_grid[x, y] = new Tile() { position = new Vector2Int(x, y), gameObject = box };
+			m_grid[x, y].SetColor(Color.grey);
 		}
 
         private void Update()
@@ -304,13 +327,25 @@ namespace GameLogic.Lua
 									SetBoxColor(paths[i], UnityEngine.Color.green);
 								}
 
+
 								MainPanel.Instance.ShowMessageBox("确定行走吗?" , (value)=> 
 								{
 									if (value)
 									{
 										selectedUnit.UnSelected();
 										selectedUnit.SetTask(TaskType.Move, paths.ToArray());
-										//selectedUnit.Play();
+
+										for (int i = 0; i < paths.Count; i++)
+										{
+											RevertColor(paths[i]);
+										}
+									}
+									else
+									{
+										for (int i = 0; i < paths.Count; i++)
+										{
+											RevertColor(paths[i]);
+										}
 									}
 								});
 							}
@@ -319,6 +354,8 @@ namespace GameLogic.Lua
 								API.GameEvent.Send(GameEvent.SystemTxt, "当前路径无法移动");
 							}
 						}
+
+						API.GameEvent.Send(GameEvent.CLICK_TILE, click.ToVector2Int());
                     }
 
                     //else if (LayerMask.LayerToName(layer) == "Unit")
@@ -349,16 +386,23 @@ namespace GameLogic.Lua
 		}
 
 
-		private void SetBoxColor(Vector2Int vector2Int, UnityEngine.Color color)
+        private void SetBoxColor(Vector2Int vector2Int, UnityEngine.Color color)
+        {
+            if (m_grid.InBounds(vector2Int))
+            {
+                m_grid[vector2Int.x, vector2Int.y].SetColor(color);
+            }
+        }
+
+		private void RevertColor(Vector2Int vector2Int)
 		{
 			if (m_grid.InBounds(vector2Int))
 			{
-				GameObject gameObject = m_grid[vector2Int.x, vector2Int.y].gameObject;
-				gameObject.SetColor(color);
+				m_grid[vector2Int.x, vector2Int.y].RevertColor();
 			}
 		}
 
-		private DungeonPathfinder2D.PathCost OnCalculatePathCostHandler(DungeonPathfinder2D.Node a, DungeonPathfinder2D.Node b, Vector2Int end)
+        private DungeonPathfinder2D.PathCost OnCalculatePathCostHandler(DungeonPathfinder2D.Node a, DungeonPathfinder2D.Node b, Vector2Int end)
 		{
 			var pathCost = new DungeonPathfinder2D.PathCost
 			{

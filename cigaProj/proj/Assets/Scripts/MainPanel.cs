@@ -35,10 +35,21 @@ namespace GameLogic.Lua
         public Button buttonCannel;
         public Text messageTxt;
         private System.Action<bool> m_mssageBoxAction;
-        
+
+        public Text roundText;
+
         private Unit m_selectedUnit;
 
         public static MainPanel Instance;
+
+        /// <summary>
+        /// 当前回合数
+        /// </summary>
+        public int round { get; set; } = 1;
+        /// <summary>
+        /// 当前回合第几步
+        /// </summary>
+        public int step { get; set; } = 0;
 
         private void Start()
         {
@@ -65,6 +76,13 @@ namespace GameLogic.Lua
 
         private void OnClickPlayHandler()
         {
+            if (step == 3)
+            {
+                round++;
+                step = 0;
+            }
+            step++;
+            roundText.text = string.Format("R:{0} S:{1}", round, step);
             Map.Instance.Play();
         }
 

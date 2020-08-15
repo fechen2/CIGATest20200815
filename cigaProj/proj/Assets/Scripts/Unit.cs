@@ -34,8 +34,6 @@ namespace GameLogic.Lua
 
 		private int m_index = 0;
 
-		private Vector3 m_targetPos;
-
 		private System.Action m_action;
 
 		public float speed = 5;
@@ -146,6 +144,8 @@ namespace GameLogic.Lua
 
 		private void TaskComplete()
 		{
+			m_taskType = TaskType.None;
+			curPos = transform.position.ToVector2Int();
 			m_isCompeteSetTask = false;
 			gameObject.SetColor(m_originalColor);
 		}
