@@ -203,6 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 903d653070345d84497cd46dcc1fe6c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  refButton: {fileID: 0}
   index: 0
   unitType: 1
   speed: 5
@@ -235,8 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curHP: 100
-  AttackValue: 10
-  DefendVal: 2
+  AttackValue: 25
+  DefendVal: 0
   MagicVal: 20
   Speed: 1
   curMoveEnergy: 1
@@ -259,6 +260,7 @@ MonoBehaviour:
   zuZhouGetBegin_BigTime: 0
   zuZhouGet_skillReleaseBigTime: 0
   hpText: {fileID: 723193604}
+  isDead: 0
   isTiaoPiTrigger: 0
   tiaoPiBegin_BigTime: 0
   tiaoPi_cdReleaseBigTime: 0
