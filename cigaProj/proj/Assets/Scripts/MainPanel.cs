@@ -264,6 +264,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "2");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonC;
         }
 
         private void OnClickRightBButtonAHandler()
@@ -274,6 +275,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "1");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonB;
         }
 
         private void OnClickRightAButtonAHandler()
@@ -284,6 +286,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "0");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonA;
         }
 
         private void OnClickLeftCButtonAHandler()
@@ -294,6 +297,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "2");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonC;
         }
 
         private void OnClickLeftBButtonAHandler()
@@ -304,6 +308,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "1");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonB;
         }
 
         private void OnClickLeftAButtonAHandler()
@@ -314,6 +319,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "0");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonA;
         }
     }
 }
