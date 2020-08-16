@@ -75,8 +75,7 @@ namespace GameLogic.Lua
 			leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
             leftClear.onClick.AddListener(() =>
             {
-                cameraObj.transform.DOMove(new Vector3(15.29f, 22.38f, -5.39f),1);
-                cameraObj.transform.DORotate(new Vector3(65.00f, -32.89f, 0f), 1);
+                PlayRightCamera();
                 tipText.text = "右方请操作!";
                 leftObject.SetActive(false);
                 rightObject.SetActive(true);
@@ -88,8 +87,7 @@ namespace GameLogic.Lua
 			rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
             rightClear.onClick.AddListener(() =>
             {
-                cameraObj.transform.DOMove(new Vector3(3.08f, 22.13f, -6.3f), 1);
-                cameraObj.transform.DORotate(new Vector3(63.29f, 32.89f, 0f), 1);
+                PlayLeftCamera();
                 tipText.text = "左方请操作!";
                 leftObject.SetActive(true);
                 rightObject.SetActive(false);
@@ -108,6 +106,7 @@ namespace GameLogic.Lua
 
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
             API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
+            API.GameEvent.Add(GameEvent.TASK_EXECUTE_FINISHED, OnRecivedTaskFinished);
 
             tipText.text = "左方请操作!";
             skillWindow.SetActive(false);
@@ -169,9 +168,37 @@ namespace GameLogic.Lua
                 round++;
                 step = 0;
             }
+
             step++;
             roundText.text = string.Format("R:{0} S:{1}", round, step);
-            Map.Instance.Play();
+
+            PlayCenterCamera().OnComplete(() =>
+            {
+                Map.Instance.Play();
+            });
+        }
+
+        private void PlayLeftCamera()
+        {
+            cameraObj.transform.DOMove(new Vector3(3.08f, 22.13f, -6.3f), 1);
+            cameraObj.transform.DORotate(new Vector3(63.29f, 32.89f, 0f), 1);
+        }
+
+        private void PlayRightCamera()
+        {
+            cameraObj.transform.DOMove(new Vector3(15.29f, 22.38f, -5.39f), 1);
+            cameraObj.transform.DORotate(new Vector3(65.00f, -32.89f, 0f), 1);
+        }
+
+        private Tweener PlayCenterCamera()
+        {
+            cameraObj.transform.DOMove(new Vector3(10.0f, 22.13f, -6.3f), 1);
+            return cameraObj.transform.DORotate(new Vector3(64.3f, 0.0f, 0f), 1);
+        }
+
+        private void OnRecivedTaskFinished(object value)
+        {
+            PlayCenterCamera();
         }
 
         public void ShowMessageBox(string txt,System.Action<bool> callback)

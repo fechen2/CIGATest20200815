@@ -18,5 +18,6 @@ namespace GameLogic.Lua
 		CLICK_TILE = 0,
         SystemTxt = 1,
         ShowSkillWindow = 2,
+        TASK_EXECUTE_FINISHED = 3,
     }
 }

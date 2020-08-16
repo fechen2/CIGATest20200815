@@ -56,6 +56,7 @@ namespace GameLogic.Lua
 		//private object m_taskParam;
 		//private TaskType m_taskType;
 		private bool m_isCompeteSetTask;
+		public bool isCompleteTask { get { return !m_isCompeteSetTask; } }
 
 		private Color m_originalColor;
 
@@ -166,14 +167,14 @@ namespace GameLogic.Lua
 		//	m_isCompeteSetTask = true;
 		//}
 
-		public void Play()
+		public void Play(System.Action action)
 		{
 			if (m_taskQueues.Count > 0)
 			{
 				Task task = m_taskQueues.Dequeue();
 				task.Play(() =>
 				{
-					Play();
+					Play(action);
 				});
 			}
 			else
@@ -182,7 +183,7 @@ namespace GameLogic.Lua
 				curPos = transform.position.ToVector2Int();
 				m_isCompeteSetTask = false;
 				gameObject.SetColor(m_originalColor);
-
+				action?.Invoke();
 				Debug.LogError("Task Queue Finished.");
 			}
 		}

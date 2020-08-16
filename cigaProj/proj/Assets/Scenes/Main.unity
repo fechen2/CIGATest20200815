@@ -2423,7 +2423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e24d0109c2d21a46a775feeab2dc582, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraObj: {fileID: 0}
+  cameraObj: {fileID: 963194225}
   leftObject: {fileID: 1407512089}
   leftButtonA: {fileID: 1325399837}
   leftButtonB: {fileID: 650554546}

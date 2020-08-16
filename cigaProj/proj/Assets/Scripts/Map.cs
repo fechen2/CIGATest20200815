@@ -194,7 +194,23 @@ namespace GameLogic.Lua
 
 			foreach (var item in m_units)
 			{
-				item.Value.Peek().Play();
+				item.Value.Peek().Play(OnPlayCompleteHandler);
+			}
+		}
+
+		private void OnPlayCompleteHandler()
+		{
+			bool result = true;
+			foreach (var item in m_units)
+			{
+				if (!item.Value.Peek().isCompleteTask)
+				{
+					result = false;
+				}
+			}
+			if (result)
+			{
+				API.GameEvent.Send(GameEvent.TASK_EXECUTE_FINISHED);
 			}
 		}
 
