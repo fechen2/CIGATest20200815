@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameLogic.Lua;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
@@ -38,6 +39,11 @@ public class CommonSkillInfo
 public class PlayerConfig
 {
     public const string normalSkill = "normalSkill";
+
+
+    public const int range_puGong = 1;
+
+
     //--
     //  CommonSkillInfo(2 消耗行动点,2伤害倍率) 
     //-----战士相关配置： 
@@ -124,7 +130,7 @@ public class PlayerConfig
 
     public static int GetCurBig()
     {
-        return 0;
+        return MainPanel.Instance.round;
     }
 
     public static int GetCurSmall()

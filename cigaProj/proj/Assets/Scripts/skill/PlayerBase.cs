@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameLogic.Lua;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +17,17 @@ public enum ZuZhouType
 
 public class PlayerBase : MonoBehaviour
 {
+    public Vector2Int GetCurCoord()
+    {
+        Unit unit = gameObject.GetComponent<Unit>();
+        return unit.curPos;
+    }
+
+    public Unit GetUnit()
+    {
+        return gameObject.GetComponent<Unit>();
+    }
+
     //--属性：
     public int baseProp = 10;
     public int curHP = 100;
@@ -151,31 +163,44 @@ public class PlayerBase : MonoBehaviour
     {
         if(curSkill == PlayerConfig.normalSkill)
         {
-            if (mCurEnemyList != null)
+            mCurEnemyList.Clear();
+            List<Unit> units = null;
+            if(Map.Instance.TryGetUnitsByRange(GetUnit(), GetCurCoord(),PlayerConfig.range_puGong, out units))
             {
-                for (int i = 0; i < mCurEnemyList.Count; ++i)
+                for(int i=0; i< units.Count; ++i)
                 {
-                    if (!mCurEnemyList[i].isHiding)
+                    mCurEnemyList.Add(units[i].gameObject.GetComponent<PlayerBase>());
+                }
+                if (mCurEnemyList.Count>0)
+                {
+                    for (int i = 0; i < mCurEnemyList.Count; ++i)
                     {
-                        if(this is PlayerDaoZei && this.isHiding)
+                        if (!mCurEnemyList[i].isHiding)
                         {
-                            //--无视护卫：
-                            float hp = AttackValue;
-                            mCurEnemyList[i].LoseHP((int)hp);
-                            mCurEnemyList[i].LoseHP((int)hp);
-                            this.SetHide(false);
+                            if (this is PlayerDaoZei && this.isHiding)
+                            {
+                                //--无视护卫：
+                                float hp = AttackValue;
+                                mCurEnemyList[i].LoseHP((int)hp);
+                                mCurEnemyList[i].LoseHP((int)hp);
+                                this.SetHide(false);
+                            }
+                            else
+                            {
+                                float hp = AttackValue;
+                                mCurEnemyList[i].LoseHP((int)hp);
+                            }
                         }
                         else
                         {
-                            float hp = AttackValue;
-                            mCurEnemyList[i].LoseHP((int)hp);
+                            mCurEnemyList[i].SetHide(false);
                         }
                     }
-                    else
-                    {
-                        mCurEnemyList[i].SetHide(false);
-                    }
                 }
+            }
+
+            if (mCurEnemyList.Count > 0)
+            {
             }
             else
             {

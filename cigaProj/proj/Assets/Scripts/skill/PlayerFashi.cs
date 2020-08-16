@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class PlayerFaShi : PlayerBase
+public class PlayerFashi : PlayerBase
 {
     //--天谴相关
     public bool isTianQianTrigger = false;

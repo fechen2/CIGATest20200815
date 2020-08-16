@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class PlayerZhanShi : PlayerBase
+public class PlayerZhanShi : PlayerBase
 {    //--tiaoPi相关
     public bool isTiaoPiTrigger = false;
     public int tiaoPiBegin_BigTime = 0;

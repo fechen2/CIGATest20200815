@@ -125,19 +125,21 @@ namespace GameLogic.Lua
 			}
 		}
 
-		public bool TryGetUnitsByRange(Vector2Int pos, int range, out List<Unit> units)
+		public bool TryGetUnitsByRange(Unit selectUnit, Vector2Int pos, int range, out List<Unit> units)
 		{
 			units = new List<Unit>();
-			Vector2Int[] vector2Ints = GetIndexs(pos,new Vector2Int(range,range),range);
+			Vector2Int[] vector2Ints = GetIndexs(pos, new Vector2Int(range, range), range);
 			for (int i = 0; i < vector2Ints.Length; i++)
 			{
 				if (TryGetUnit(vector2Ints[i], out Unit u))
 				{
-					units.Add(u);
+					if (u.campType != selectUnit.campType)
+						units.Add(u);
 				}
 			}
 			return units.Count > 0;
 		}
+
 
 		public bool TryGetUnit(Vector2Int pos, out Unit unit)
 		{
