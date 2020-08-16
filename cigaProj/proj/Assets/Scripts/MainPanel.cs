@@ -142,7 +142,11 @@ namespace GameLogic.Lua
         private void OnClickSelectSkillAHandler()
         {
             skillWindow.SetActive(false);
-            Debug.LogError("OnClickSelectSkillAHandler");
+            Debug.Log("OnClickSelectSkillAHandler");
+
+            PlayerBase playerBase = m_selectedUnit.gameObject.GetComponent<PlayerBase>();
+            playerBase.BeforePlayNormal();
+            m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
         }
 
         /// <summary>
@@ -151,9 +155,13 @@ namespace GameLogic.Lua
         private void OnClickSelectSkillBHandler()
         {
             skillWindow.SetActive(false);
-            Debug.LogError("OnClickSelectSkillBHandler");
-        }
+            Debug.Log("OnClickSelectSkillBHandler");
 
+            PlayerBase playerBase = m_selectedUnit.gameObject.GetComponent<PlayerBase>();
+            playerBase.BeforePlaySkill1();
+            m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
+
+        }
         private void OnClickPlayHandler()
         {
             if (step == 3)

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class PlayerDaoZei : PlayerBase
+public class PlayerDaoZei : PlayerBase
 {
     //--yinShen相关
     public bool isYinShenTrigger = false;
