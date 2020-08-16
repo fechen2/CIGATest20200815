@@ -29,7 +29,6 @@ public class PlayerBase : MonoBehaviour
     }
 
     //--属性：
-    public int baseProp = 10;
     public int curHP = 100;
     public int AttackValue = 10;
     public int DefendVal = 2;
@@ -64,6 +63,25 @@ public class PlayerBase : MonoBehaviour
     public int zuZhouGetBegin_BigTime = 0;
     public int zuZhouGet_skillReleaseBigTime = 0;
     //---------
+
+    public TextMesh hpText;
+
+    public void ShowHPText(int val)
+    {
+        if(hpText)
+        {
+            hpText.gameObject.SetActive(true);
+            hpText.text = "损失"+val.ToString();
+            Invoke("HideHPText", 5);
+        }
+    }    
+    public void HideHPText()
+    {
+        if (hpText)
+        {
+            hpText.gameObject.SetActive(false);
+        }
+    }
 
     public void SetSheild(int v)
     {
@@ -246,6 +264,7 @@ public class PlayerBase : MonoBehaviour
         if(loseHp > 0)
         {
             curHP = curHP - loseHp;
+            ShowHPText(loseHp);
             Debug.Log(playerName + "扣血后 curHP：" + curHP );
             if (curHP <= 0)
             {
@@ -262,7 +281,7 @@ public class PlayerBase : MonoBehaviour
 
     public virtual void MyStart()
     {
-
+        HideHPText();
     }
 
     public virtual void MyUpdate()
