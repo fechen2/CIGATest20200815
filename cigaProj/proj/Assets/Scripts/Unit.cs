@@ -184,7 +184,7 @@ namespace GameLogic.Lua
 				m_isCompeteSetTask = false;
 				gameObject.SetColor(m_originalColor);
 				action?.Invoke();
-				Debug.LogError("Task Queue Finished.");
+				//Debug.LogError("Task Queue Finished.");
 			}
 		}
 

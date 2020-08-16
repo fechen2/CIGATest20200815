@@ -19,5 +19,6 @@ namespace GameLogic.Lua
         SystemTxt = 1,
         ShowSkillWindow = 2,
         TASK_EXECUTE_FINISHED = 3,
+        RESET_GAME = 4,
     }
 }
