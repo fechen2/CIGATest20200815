@@ -41,16 +41,17 @@ namespace GameLogic.Lua
 		{
 			base.Play(action);
 			playerBase.RealPlaySkill();
-		}
-
-		private void OnMoveStepCompleteHandler(int value)
-		{
-
-		}
-
-		private void OnMoveCompleteHandler()
-		{
 			Complete();
 		}
+
+		//private void OnMoveStepCompleteHandler(int value)
+		//{
+
+		//}
+
+		//private void OnMoveCompleteHandler()
+		//{
+		//	Complete();
+		//}
 	}
 }
