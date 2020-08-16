@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curHP: 4
-  AttackValue: 1
+  AttackValue: 4
   DefendVal: 0
   MagicVal: 20
   Speed: 1
