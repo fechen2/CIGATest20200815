@@ -143,7 +143,7 @@ namespace GameLogic.Lua
 
 		public void Selected()
 		{
-			if (!m_isCompeteSetTask)
+			if (!m_isCompeteSetTask && !selected)
 			{
 				selected = true;
 				m_renderer.material.DOColor(Color.yellow, 0.5f).SetLoops(-1, LoopType.Yoyo);
@@ -153,7 +153,7 @@ namespace GameLogic.Lua
 
 		public void UnSelected()
 		{
-			if (!m_isCompeteSetTask)
+			if (!m_isCompeteSetTask && selected)
 			{
 				selected = false;
 				m_renderer.material.DOKill();
