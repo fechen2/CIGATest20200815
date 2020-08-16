@@ -19,12 +19,16 @@ namespace GameLogic.Lua
 {
 	public class MainPanel : MonoBehaviour
 	{
+        public GameObject cameraObj;
+
+        public GameObject leftObject;
 		public Button leftButtonA;
 		public Button leftButtonB;
 		public Button leftButtonC;
         public Button leftClear;
 
-		public Button rightButtonA;
+        public GameObject rightObject;
+        public Button rightButtonA;
 		public Button rightButtonB;
 		public Button rightButtonC;
         public Button rightClear;
@@ -44,6 +48,8 @@ namespace GameLogic.Lua
         private System.Action<bool> m_mssageBoxAction;
 
         public Text roundText;
+
+        public Text tipText;
 
         public Button restartGameBtn;
 
@@ -69,6 +75,11 @@ namespace GameLogic.Lua
 			leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
             leftClear.onClick.AddListener(() =>
             {
+                cameraObj.transform.DOMove(new Vector3(15.29f, 22.38f, -5.39f),1);
+                cameraObj.transform.DORotate(new Vector3(65.00f, -32.89f, 0f), 1);
+                tipText.text = "右方请操作!";
+                leftObject.SetActive(false);
+                rightObject.SetActive(true);
                 Map.Instance.Hide();
             });
 
@@ -77,6 +88,11 @@ namespace GameLogic.Lua
 			rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
             rightClear.onClick.AddListener(() =>
             {
+                cameraObj.transform.DOMove(new Vector3(3.08f, 22.13f, -6.3f), 1);
+                cameraObj.transform.DORotate(new Vector3(63.29f, 32.89f, 0f), 1);
+                tipText.text = "左方请操作!";
+                leftObject.SetActive(true);
+                rightObject.SetActive(false);
                 Map.Instance.Hide();
             });
 
@@ -93,9 +109,12 @@ namespace GameLogic.Lua
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
             API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
 
+            tipText.text = "左方请操作!";
             skillWindow.SetActive(false);
             messageObj.SetActive(false);
             systemPromptTxt.gameObject.SetActive(false);
+            leftObject.SetActive(true);
+            rightObject.SetActive(false);
         }
 
         /// <summary>

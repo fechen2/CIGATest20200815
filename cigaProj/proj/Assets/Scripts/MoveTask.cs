@@ -43,6 +43,8 @@ namespace GameLogic.Lua
 			m_gameObject = GameObject.Instantiate(m_unit.gameObject);
 			m_gameObject.transform.position = m_targetPos.ToVector3(1.5f);
 			m_gameObject.SetAlpha(0.3f);
+			
+			m_unit.UnSelected();
 
 			Unit unit = m_gameObject.GetComponent<Unit>();
 			unit.uniqueId = m_unit.uniqueId;
@@ -52,7 +54,6 @@ namespace GameLogic.Lua
 			unit.parentUnit = m_unit;
 
 			m_unit.AddChild(unit);
-			m_unit.UnSelected();
 
 			Map.Instance.AddUnit(unit);
 		}

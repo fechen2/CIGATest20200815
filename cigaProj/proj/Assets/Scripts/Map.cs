@@ -47,7 +47,15 @@ namespace GameLogic.Lua
 
 		private void SetColor()
 		{
-			gameObject.SetColor(colors.Peek());
+			if (colors.Count > 1)
+			{
+				gameObject.SetVisible(true);
+				gameObject.SetColor(colors.Peek());
+			}
+			else
+			{
+				gameObject.SetVisible(false);
+			}
 		}
 
 		public void ClearTileColor()
@@ -180,6 +188,8 @@ namespace GameLogic.Lua
 
 		public void Play()
 		{
+			Hide();
+
 			foreach (var item in m_units)
 			{
 				item.Value.Peek().Play();
@@ -423,10 +433,11 @@ namespace GameLogic.Lua
 							   {
 								   if (value)
 								   {
-									   for (int i = 0; i < paths.Count; i++)
-									   {
-										   RevertColor(paths[i]);
-									   }
+									   //for (int i = 0; i < paths.Count; i++)
+									   //{
+									   // RevertColor(paths[i]);
+									   //}
+									   ClearTileColor();
 
 									   API.GameEvent.Send(GameEvent.ShowSkillWindow, target);
 								   }
@@ -441,19 +452,18 @@ namespace GameLogic.Lua
 									   {
 										   parentRoot = selectedUnit;
 									   }
-									   if (selectedUnit.PushTask(new MoveTask(parentRoot, paths.ToArray(), target)))
-									   {
-										   selectedUnit.UnSelected();
 
+									   ClearTileColor();
+									   MoveTask move = new MoveTask(parentRoot, paths.ToArray(), target);
+									   if (selectedUnit.PushTask(move))
+									   {
 										   for (int i = 0; i < selectedUnit.childrenUnits.Count; i++)
 										   {
 											   selectedUnit.childrenUnits[i].UnSelected();
 										   }
 
-										   for (int i = 0; i < paths.Count; i++)
-										   {
-											   RevertColor(paths[i]);
-										   }
+										   ClearTileColor();
+
 										   Unit parent = selectedUnit.parentUnit;
 										   if (parent != null)
 										   {
@@ -595,6 +605,12 @@ public static class Extends
 	{
 		Renderer renderer = gameObject.GetComponent<Renderer>();
 		renderer.material.color = color;
+	}
+
+	public static void SetVisible(this GameObject gameObject, bool value)
+	{
+		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
+		renderer.enabled = value;
 	}
 
 	public static void SetAlpha(this GameObject gameObject, float alpha)
