@@ -92,6 +92,8 @@ namespace GameLogic.Lua
 
 		public Dictionary<string , Stack< Unit>> m_units;
 
+		public List<Unit> LeftList = new List<Unit>();
+		public List<Unit> RightList = new List<Unit>();
 		//public UnityEngine.AI.NavMeshSurface navMeshSurface;
 
 		//private NavMeshAgent m_navMeshAgent;
@@ -248,6 +250,9 @@ namespace GameLogic.Lua
 		/// </summary>
 		private void GeneraterRole(Vector2Int[] blueCamps, Vector2Int[] redCamps)
 		{
+			LeftList.Clear();
+			RightList.Clear();
+
 			string[] suffs = new string[3] { "A", "B", "C" };
 
 			for (int i = 0; i < blueCamps.Length; i++)
@@ -264,6 +269,8 @@ namespace GameLogic.Lua
 				Stack<Unit> stackUnits = new Stack<Unit>();
 				stackUnits.Push(unit);
 				m_units.Add(unit.uniqueId, stackUnits);
+
+				LeftList.Add(unit);
 			}
 
 			for (int i = 0; i < redCamps.Length; i++)
@@ -280,6 +287,8 @@ namespace GameLogic.Lua
 				Stack<Unit> stackUnits = new Stack<Unit>();
 				stackUnits.Push(unit);
 				m_units.Add(unit.uniqueId, stackUnits);
+
+				RightList.Add(unit);
 			}
 
 			//Vector2Int center = new Vector2Int(Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.z));
