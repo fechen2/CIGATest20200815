@@ -40,8 +40,8 @@ namespace GameLogic.Lua
         public GameObject skillWindow;
         public Button skillBtnA;
         public Button skillBtnB;
-        public Button skillBtnC;
-        public Button skillBtnD;
+        //public Button skillBtnC;
+        //public Button skillBtnD;
 
         public GameObject messageObj;
         public Button buttonSure;
@@ -103,8 +103,8 @@ namespace GameLogic.Lua
 
             skillBtnA.onClick.AddListener(OnClickSelectSkillAHandler);
             skillBtnB.onClick.AddListener(OnClickSelectSkillBHandler);
-            skillBtnC.onClick.AddListener(OnClickSelectSkillCHandler);
-            skillBtnD.onClick.AddListener(OnClickSelectSkillDHandler);
+            //skillBtnC.onClick.AddListener(OnClickSelectSkillCHandler);
+            //skillBtnD.onClick.AddListener(OnClickSelectSkillDHandler);
 
             restartGameBtn.onClick.AddListener(OnRestartGameHandler);
 
