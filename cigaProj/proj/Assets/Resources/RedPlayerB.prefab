@@ -166,8 +166,7 @@ MonoBehaviour:
   isGetZuzhouTrigger: 0
   zuZhouGetBegin_BigTime: 0
   zuZhouGet_skillReleaseBigTime: 0
-  hpText: {fileID: 0}
-  curHpText: {fileID: 0}
+  hpText: {fileID: 3239832534769651057}
   isDead: 0
   isYinShenTrigger: 0
   yinShenBegin_BigTime: 0
@@ -300,22 +299,27 @@ PrefabInstance:
     - target: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
         type: 3}
       propertyPath: m_textInfo.pageCount
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
+        type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8238501534220168938, guid: 08cd821c03e60dc43afd6127b7695a58,
         type: 3}
@@ -330,3 +334,15 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 7237084649355561228}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3239832534769651057 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5231345085537813629, guid: 08cd821c03e60dc43afd6127b7695a58,
+    type: 3}
+  m_PrefabInstance: {fileID: 7237084649355561228}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

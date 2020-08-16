@@ -1,6 +1,7 @@
 ﻿using GameLogic.Lua;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum CampState
@@ -64,7 +65,7 @@ public class PlayerBase : MonoBehaviour
     public int zuZhouGet_skillReleaseBigTime = 0;
     //---------
 
-    public TextMesh hpText;
+    public TextMeshPro hpText;
     public bool isDead = false;
 
     public void ShowHPText(int val)
@@ -72,7 +73,7 @@ public class PlayerBase : MonoBehaviour
         if (hpText)
         {
             hpText.gameObject.SetActive(true);
-            hpText.text = "损失" + val.ToString();
+            hpText.text = "-" + val.ToString();
             Invoke("HideHPText", 5);
         }
     }
