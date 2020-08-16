@@ -112,7 +112,6 @@ namespace GameLogic.Lua
                 tipText.text = "左方请操作!";
                 leftObject.SetActive(true);
                 rightObject.SetActive(false);
-                Map.Instance.Hide();
             }
         }
 
