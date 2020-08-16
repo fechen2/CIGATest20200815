@@ -68,6 +68,9 @@ namespace GameLogic.Lua
         /// </summary>
         public int step { get; set; } = 0;
 
+        private bool m_leftSetFinished = false;
+        private bool m_rightSetFinished = false;
+
         private void Start()
         {
             Instance = this;
@@ -75,42 +78,29 @@ namespace GameLogic.Lua
             leftButtonA.onClick.AddListener(OnClickLeftAButtonAHandler);
 			leftButtonB.onClick.AddListener(OnClickLeftBButtonAHandler);
 			leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
-            leftClear.onClick.AddListener(() =>
-            {
-                PlayRightCamera();
-                tipText.text = "右方请操作!";
-                leftObject.SetActive(false);
-                rightObject.SetActive(true);
-                Map.Instance.Hide();
-            });
+            leftClear.onClick.AddListener(EnterRightCamp);
 
             rightButtonA.onClick.AddListener(OnClickRightAButtonAHandler);
 			rightButtonB.onClick.AddListener(OnClickRightBButtonAHandler);
 			rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
-            rightClear.onClick.AddListener(() =>
-            {
-                PlayLeftCamera();
-                tipText.text = "左方请操作!";
-                leftObject.SetActive(true);
-                rightObject.SetActive(false);
-                Map.Instance.Hide();
-            });
+            rightClear.onClick.AddListener(EnterLeftCamp);
 
             buttonSure.onClick.AddListener(OnClickSureHandler);
             buttonCannel.onClick.AddListener(OnClickCannelHandler);
 
-            playButton.onClick.AddListener(OnClickPlayHandler);
+            //playButton.onClick.AddListener(OnClickPlayHandler);
 
             skillBtnA.onClick.AddListener(OnClickSelectSkillAHandler);
             skillBtnB.onClick.AddListener(OnClickSelectSkillBHandler);
             //skillBtnC.onClick.AddListener(OnClickSelectSkillCHandler);
             //skillBtnD.onClick.AddListener(OnClickSelectSkillDHandler);
 
-            restartGameBtn.onClick.AddListener(OnRestartGameHandler);
+            //restartGameBtn.onClick.AddListener(OnRestartGameHandler);
 
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
             API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
             API.GameEvent.Add(GameEvent.TASK_EXECUTE_FINISHED, OnRecivedTaskFinished);
+            API.GameEvent.Add(GameEvent.RESET_GAME, OnRestartGameHandler);
 
             tipText.text = "左方请操作!";
             skillWindow.SetActive(false);
@@ -118,12 +108,41 @@ namespace GameLogic.Lua
             systemPromptTxt.gameObject.SetActive(false);
             leftObject.SetActive(true);
             rightObject.SetActive(false);
+
+            EnterLeftCamp();
+        }
+
+        private void EnterLeftCamp()
+        {
+            PlayLeftCamera();
+            tipText.text = "左方请操作!";
+            leftObject.SetActive(true);
+            rightObject.SetActive(false);
+            Map.Instance.Hide();
+            m_rightSetFinished = true;
+
+            if (m_leftSetFinished && m_rightSetFinished)
+            {
+                m_rightSetFinished = false;
+                m_leftSetFinished = false;
+                OnClickPlayHandler();
+            }
+        }
+
+        private void EnterRightCamp()
+        {
+            PlayRightCamera();
+            tipText.text = "右方请操作!";
+            leftObject.SetActive(false);
+            rightObject.SetActive(true);
+            Map.Instance.Hide();
+            m_leftSetFinished = true;
         }
 
         /// <summary>
         /// 重启游戏
         /// </summary>
-        private void OnRestartGameHandler()
+        private void OnRestartGameHandler(object value)
         {
             SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
         }
@@ -222,7 +241,7 @@ namespace GameLogic.Lua
 
         private void OnRecivedTaskFinished(object value)
         {
-            PlayCenterCamera();
+            EnterLeftCamp();
         }
 
         public void ShowMessageBox(string txt,System.Action<bool> callback)
@@ -264,6 +283,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "2");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonC;
         }
 
         private void OnClickRightBButtonAHandler()
@@ -274,6 +294,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "1");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonB;
         }
 
         private void OnClickRightAButtonAHandler()
@@ -284,6 +305,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.RIGHT.ToString() + "0");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = rightButtonA;
         }
 
         private void OnClickLeftCButtonAHandler()
@@ -294,6 +316,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "2");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonC;
         }
 
         private void OnClickLeftBButtonAHandler()
@@ -304,6 +327,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "1");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonB;
         }
 
         private void OnClickLeftAButtonAHandler()
@@ -314,6 +338,7 @@ namespace GameLogic.Lua
             }
             m_selectedUnit = Map.Instance.GetUnit(CampType.LEFT.ToString() + "0");
             m_selectedUnit.Selected();
+            m_selectedUnit.refButton = leftButtonA;
         }
     }
 }
