@@ -32,6 +32,10 @@ namespace GameLogic.Lua
 
         public Text systemPromptTxt;
 
+        public GameObject skillWindow;
+        public Button skillBtnA;
+        public Button skillBtnB;
+
         public GameObject messageObj;
         public Button buttonSure;
         public Button buttonCannel;
@@ -78,10 +82,44 @@ namespace GameLogic.Lua
 
             playButton.onClick.AddListener(OnClickPlayHandler);
 
-            API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
+            skillBtnA.onClick.AddListener(OnClickSelectSkillAHandler);
+            skillBtnB.onClick.AddListener(OnClickSelectSkillBHandler);
 
+            API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
+            API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
+
+            skillWindow.SetActive(false);
             messageObj.SetActive(false);
             systemPromptTxt.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// 显示Skill 面板
+        /// </summary>
+        /// <param name="value"></param>
+        private void OnRecivedShowWindowHandler(object value)
+        {
+            skillWindow.SetActive(true);
+
+            Vector2Int skillPos = (Vector2Int)value;  //技能播放位置
+        }
+
+        /// <summary>
+        /// 选择技能A
+        /// </summary>
+        private void OnClickSelectSkillAHandler()
+        {
+            skillWindow.SetActive(false);
+            Debug.LogError("OnClickSelectSkillAHandler");
+        }
+
+        /// <summary>
+        /// 选择技能B
+        /// </summary>
+        private void OnClickSelectSkillBHandler()
+        {
+            skillWindow.SetActive(false);
+            Debug.LogError("OnClickSelectSkillBHandler");
         }
 
         private void OnClickPlayHandler()

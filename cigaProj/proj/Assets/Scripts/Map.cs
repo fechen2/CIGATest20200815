@@ -397,9 +397,18 @@ namespace GameLogic.Lua
 								//}
 								DrawPath(paths.ToArray(), UnityEngine.Color.green);
 
-								MainPanel.Instance.ShowMessageBox("确定行走吗?", (value) =>
+								MainPanel.Instance.ShowMessageBox("移动or技能?", (value) =>
 							   {
 								   if (value)
+								   {
+									   for (int i = 0; i < paths.Count; i++)
+									   {
+										   RevertColor(paths[i]);
+									   }
+
+									   API.GameEvent.Send(GameEvent.ShowSkillWindow, target);
+								   }
+								   else
 								   {
 									   Unit parentRoot;
 									   if (selectedUnit.unitType == UnitType.Clone)
@@ -438,13 +447,6 @@ namespace GameLogic.Lua
 											   }
 											   parent.taskQueues.Enqueue(moveTask);
 										   }
-									   }
-								   }
-								   else
-								   {
-									   for (int i = 0; i < paths.Count; i++)
-									   {
-										   RevertColor(paths[i]);
 									   }
 								   }
 							   });
