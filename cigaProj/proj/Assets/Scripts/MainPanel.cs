@@ -17,20 +17,20 @@ using UnityEngine.UI;
 
 namespace GameLogic.Lua
 {
-	public class MainPanel : MonoBehaviour
-	{
+    public class MainPanel : MonoBehaviour
+    {
         public GameObject cameraObj;
 
         public GameObject leftObject;
-		public Button leftButtonA;
-		public Button leftButtonB;
-		public Button leftButtonC;
+        public Button leftButtonA;
+        public Button leftButtonB;
+        public Button leftButtonC;
         public Button leftClear;
 
         public GameObject rightObject;
         public Button rightButtonA;
-		public Button rightButtonB;
-		public Button rightButtonC;
+        public Button rightButtonB;
+        public Button rightButtonC;
         public Button rightClear;
 
         public Button playButton;
@@ -52,6 +52,7 @@ namespace GameLogic.Lua
         public Text roundText;
 
         public Text tipText;
+        public Text endText;
 
         public Button restartGameBtn;
 
@@ -76,13 +77,13 @@ namespace GameLogic.Lua
             Instance = this;
 
             leftButtonA.onClick.AddListener(OnClickLeftAButtonAHandler);
-			leftButtonB.onClick.AddListener(OnClickLeftBButtonAHandler);
-			leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
+            leftButtonB.onClick.AddListener(OnClickLeftBButtonAHandler);
+            leftButtonC.onClick.AddListener(OnClickLeftCButtonAHandler);
             leftClear.onClick.AddListener(EnterRightCamp);
 
             rightButtonA.onClick.AddListener(OnClickRightAButtonAHandler);
-			rightButtonB.onClick.AddListener(OnClickRightBButtonAHandler);
-			rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
+            rightButtonB.onClick.AddListener(OnClickRightBButtonAHandler);
+            rightButtonC.onClick.AddListener(OnClickRightCButtonAHandler);
             rightClear.onClick.AddListener(EnterLeftCamp);
 
             buttonSure.onClick.AddListener(OnClickSureHandler);
@@ -98,7 +99,7 @@ namespace GameLogic.Lua
             //restartGameBtn.onClick.AddListener(OnRestartGameHandler);
 
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
-            API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
+            API.GameEvent.Add(GameEvent.ShowSkillWindow, OnRecivedShowWindowHandler);
             API.GameEvent.Add(GameEvent.TASK_EXECUTE_FINISHED, OnRecivedTaskFinished);
             API.GameEvent.Add(GameEvent.RESET_GAME, OnRestartGameHandler);
 
@@ -107,12 +108,20 @@ namespace GameLogic.Lua
             messageObj.SetActive(false);
             systemPromptTxt.gameObject.SetActive(false);
 
+            endText.gameObject.SetActive(false);
+
             {
                 PlayLeftCamera();
                 tipText.text = "左方请操作!";
                 leftObject.SetActive(true);
                 rightObject.SetActive(false);
             }
+        }
+
+        public void SetEndText(string v)
+        {
+            endText.gameObject.SetActive(true);
+            endText.text = v;
         }
 
         private void EnterLeftCamp()
@@ -257,7 +266,7 @@ namespace GameLogic.Lua
             EnterLeftCamp();
         }
 
-        public void ShowMessageBox(string txt,System.Action<bool> callback)
+        public void ShowMessageBox(string txt, System.Action<bool> callback)
         {
             messageObj.SetActive(true);
             messageTxt.text = txt;
@@ -266,13 +275,13 @@ namespace GameLogic.Lua
 
         private void OnClickCannelHandler()
         {
-            m_mssageBoxAction?.Invoke(false); 
+            m_mssageBoxAction?.Invoke(false);
             messageObj.SetActive(false);
         }
 
         private void OnClickSureHandler()
         {
-            m_mssageBoxAction?.Invoke(true); 
+            m_mssageBoxAction?.Invoke(true);
             messageObj.SetActive(false);
         }
 
@@ -280,7 +289,7 @@ namespace GameLogic.Lua
         {
             systemPromptTxt.gameObject.SetActive(true);
             systemPromptTxt.text = value.ToString();
-            Invoke("OnDelayTimeHandler",2);
+            Invoke("OnDelayTimeHandler", 2);
         }
 
         private void OnDelayTimeHandler()

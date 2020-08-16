@@ -65,16 +65,17 @@ public class PlayerBase : MonoBehaviour
     //---------
 
     public TextMesh hpText;
+    public bool isDead = false;
 
     public void ShowHPText(int val)
     {
-        if(hpText)
+        if (hpText)
         {
             hpText.gameObject.SetActive(true);
-            hpText.text = "损失"+val.ToString();
+            hpText.text = "损失" + val.ToString();
             Invoke("HideHPText", 5);
         }
-    }    
+    }
     public void HideHPText()
     {
         if (hpText)
@@ -92,7 +93,7 @@ public class PlayerBase : MonoBehaviour
     {
         curZuZhouType = v;
 
-        if(v!= ZuZhouType.None)
+        if (v != ZuZhouType.None)
         {
             hasZuZhouDamgeValue = damageValue;
             SetGetZuZhouData(true);
@@ -111,11 +112,11 @@ public class PlayerBase : MonoBehaviour
         {
             isGetZuzhouTrigger = false;
             //--受到伤害：
-            if(curZuZhouType == ZuZhouType.Normal)
+            if (curZuZhouType == ZuZhouType.Normal)
             {
                 this.LoseHP((int)hasZuZhouDamgeValue);
             }
-            else if(curZuZhouType == ZuZhouType.Normal)
+            else if (curZuZhouType == ZuZhouType.Normal)
             {
                 this.LoseHP((int)hasZuZhouDamgeValue);
                 this.LoseHP((int)hasZuZhouDamgeValue);
@@ -142,7 +143,7 @@ public class PlayerBase : MonoBehaviour
     public void CostActPoint(int val)
     {
         curActPoints = curActPoints - val;
-        if(curActPoints <0)
+        if (curActPoints < 0)
         {
             Debug.LogError("行动点结果为负数 是否有误！");
         }
@@ -156,7 +157,7 @@ public class PlayerBase : MonoBehaviour
         PlayerConfig.Move();
         CostActPoint(1);
     }
-    
+
     public void MoveGrid()
     {
         PlayerConfig.Move();
@@ -179,17 +180,17 @@ public class PlayerBase : MonoBehaviour
 
     public virtual void RealPlaySkill()
     {
-        if(curSkill == PlayerConfig.normalSkill)
+        if (curSkill == PlayerConfig.normalSkill)
         {
             mCurEnemyList.Clear();
             List<Unit> units = null;
-            if(Map.Instance.TryGetUnitsByRange(GetUnit(), GetCurCoord(),PlayerConfig.range_puGong, out units))
+            if (Map.Instance.TryGetUnitsByRange(GetUnit(), GetCurCoord(), PlayerConfig.range_puGong, out units))
             {
-                for(int i=0; i< units.Count; ++i)
+                for (int i = 0; i < units.Count; ++i)
                 {
                     mCurEnemyList.Add(units[i].gameObject.GetComponent<PlayerBase>());
                 }
-                if (mCurEnemyList.Count>0)
+                if (mCurEnemyList.Count > 0)
                 {
                     for (int i = 0; i < mCurEnemyList.Count; ++i)
                     {
@@ -249,7 +250,7 @@ public class PlayerBase : MonoBehaviour
     public virtual void LoseHP(int subHp)
     {
         string playerName = gameObject.name;
-        if (curSheid >0)
+        if (curSheid > 0)
         {
             Debug.Log(playerName + "护盾抵抗一次 curSheid:" + curSheid);
 
@@ -257,15 +258,15 @@ public class PlayerBase : MonoBehaviour
 
             return;
         }
-       
-        Debug.Log(playerName+ "掉血！ curHP：" + curHP + "掉血量："+ subHp + "防御值："+ DefendVal);
+
+        Debug.Log(playerName + "掉血！ curHP：" + curHP + "掉血量：" + subHp + "防御值：" + DefendVal);
 
         int loseHp = (subHp - DefendVal);
-        if(loseHp > 0)
+        if (loseHp > 0)
         {
             curHP = curHP - loseHp;
             ShowHPText(loseHp);
-            Debug.Log(playerName + "扣血后 curHP：" + curHP );
+            Debug.Log(playerName + "扣血后 curHP：" + curHP);
             if (curHP <= 0)
             {
                 Die();
@@ -276,8 +277,53 @@ public class PlayerBase : MonoBehaviour
 
     public virtual void Die()
     {
+        isDead = true;
+        gameObject.SetActive(false);
 
+        Unit unit = GetUnit();
+        if (unit && unit.refButton)
+        {
+            unit.refButton.gameObject.SetActive(false);
+        }
+        bool isLeftWin = false;
+        if (unit)
+        {
+            List<Unit> unitList = null;
+            if (unit.campType == CampType.LEFT)
+            {
+                unitList = Map.Instance.LeftList;
+                isLeftWin = false;
+            }
+            else
+            {
+                unitList = Map.Instance.RightList;
+                isLeftWin = true;
+            }
+            if (unitList != null)
+            {
+                bool isAllDie = true;
+                for (int i = 0; i < unitList.Count; ++i)
+                {
+                    if (!unitList[i].GetComponent<PlayerBase>().isDead)
+                    {
+                        isAllDie = false;
+                        break;
+                    }
+                }
+                if (isAllDie)
+                {
+                    MainPanel.Instance.SetEndText("游戏结束,"+ (isLeftWin ? "左方获胜！" : "右方获胜！")+"3秒后重新开始！");
+                    Invoke("EndStartGame",3);
+                }
+            }
+        }
     }
+
+    public void EndStartGame()
+    {
+        API.GameEvent.Send(GameEvent.RESET_GAME);
+    }
+    //----------------------------------------------------------------------------------
 
     public virtual void MyStart()
     {
