@@ -142,9 +142,10 @@ namespace GameLogic.Lua
         /// <summary>
         /// 重启游戏
         /// </summary>
-        private void OnRestartGameHandler(object value)
+        public void OnRestartGameHandler(object value)
         {
             SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
+            Debug.Log("OnRestartGameHandler 游戏结束！！");
         }
 
         /// <summary>
