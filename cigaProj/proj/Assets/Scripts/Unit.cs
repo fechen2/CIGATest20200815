@@ -156,6 +156,12 @@ namespace GameLogic.Lua
 			if (!m_isCompeteSetTask && selected)
 			{
 				selected = false;
+
+				if(m_renderer == null)
+                {
+					m_renderer = GetComponent<Renderer>();
+				}
+
 				m_renderer.material.DOKill();
 				m_renderer.material.color = m_originalColor;
 				HideGrid(ability);
