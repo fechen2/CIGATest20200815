@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace GameLogic.Lua
@@ -43,6 +44,8 @@ namespace GameLogic.Lua
         private System.Action<bool> m_mssageBoxAction;
 
         public Text roundText;
+
+        public Button restartGameBtn;
 
         private Unit m_selectedUnit;
 
@@ -85,12 +88,22 @@ namespace GameLogic.Lua
             skillBtnA.onClick.AddListener(OnClickSelectSkillAHandler);
             skillBtnB.onClick.AddListener(OnClickSelectSkillBHandler);
 
+            restartGameBtn.onClick.AddListener(OnRestartGameHandler);
+
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
             API.GameEvent.Add(GameEvent.ShowSkillWindow,OnRecivedShowWindowHandler);
 
             skillWindow.SetActive(false);
             messageObj.SetActive(false);
             systemPromptTxt.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// 重启游戏
+        /// </summary>
+        private void OnRestartGameHandler()
+        {
+            SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
         }
 
         /// <summary>

@@ -125,6 +125,20 @@ namespace GameLogic.Lua
 			}
 		}
 
+		public bool TryGetUnitsByRange(Vector2Int pos, int range, out List<Unit> units)
+		{
+			units = new List<Unit>();
+			Vector2Int[] vector2Ints = GetIndexs(pos,new Vector2Int(range,range),range);
+			for (int i = 0; i < vector2Ints.Length; i++)
+			{
+				if (TryGetUnit(vector2Ints[i], out Unit u))
+				{
+					units.Add(u);
+				}
+			}
+			return units.Count > 0;
+		}
+
 		public bool TryGetUnit(Vector2Int pos, out Unit unit)
 		{
 			foreach (var item in m_units)
@@ -241,6 +255,8 @@ namespace GameLogic.Lua
 
 
 		}
+
+
 
 		public Vector2Int[] Find(Vector2Int start, Vector2Int end)
 		{
