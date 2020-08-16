@@ -27,6 +27,10 @@ namespace GameLogic.Lua
         public Button leftButtonC;
         public Button leftClear;
 
+        public Button team;
+        public GameObject teamList;
+        public Button closeTeam;
+
         public GameObject rightObject;
         public Button rightButtonA;
         public Button rightButtonB;
@@ -97,6 +101,9 @@ namespace GameLogic.Lua
             //skillBtnD.onClick.AddListener(OnClickSelectSkillDHandler);
 
             //restartGameBtn.onClick.AddListener(OnRestartGameHandler);
+
+            team.onClick.AddListener(OnClickTeamListHandler);
+            closeTeam.onClick.AddListener(OnClickCloseTeamHandler);
 
             API.GameEvent.Add(GameEvent.SystemTxt, OnRecivedSystemTxtHandler);
             API.GameEvent.Add(GameEvent.ShowSkillWindow, OnRecivedShowWindowHandler);
@@ -225,6 +232,16 @@ namespace GameLogic.Lua
             PlayerBase playerBase = m_selectedUnit.gameObject.GetComponent<PlayerBase>();
             playerBase.BeforePlaySkill3();
             m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
+        }
+
+        private void OnClickTeamListHandler()
+        {
+            teamList.SetActive(true);
+        }
+
+        private void OnClickCloseTeamHandler()
+        {
+            teamList.SetActive(false);
         }
 
         private void OnClickPlayHandler()
