@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GameLogic.Lua
 {
@@ -33,6 +34,7 @@ namespace GameLogic.Lua
 
 	public class Unit : MonoBehaviour
 	{
+		public Button refButton;
 		public int index;
 
 		public UnitType unitType = UnitType.Original;
@@ -81,6 +83,8 @@ namespace GameLogic.Lua
 		/// 
 		/// </summary>
 		public Unit parentUnit { get; set; }
+
+
 
 		private List<Unit> m_childrenUnits = new List<Unit>();
 
