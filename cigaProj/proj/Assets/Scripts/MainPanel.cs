@@ -40,6 +40,8 @@ namespace GameLogic.Lua
         public GameObject skillWindow;
         public Button skillBtnA;
         public Button skillBtnB;
+        public Button skillBtnC;
+        public Button skillBtnD;
 
         public GameObject messageObj;
         public Button buttonSure;
@@ -103,6 +105,8 @@ namespace GameLogic.Lua
 
             skillBtnA.onClick.AddListener(OnClickSelectSkillAHandler);
             skillBtnB.onClick.AddListener(OnClickSelectSkillBHandler);
+            skillBtnC.onClick.AddListener(OnClickSelectSkillCHandler);
+            skillBtnD.onClick.AddListener(OnClickSelectSkillDHandler);
 
             restartGameBtn.onClick.AddListener(OnRestartGameHandler);
 
@@ -162,6 +166,26 @@ namespace GameLogic.Lua
             m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
 
         }
+
+        private void OnClickSelectSkillCHandler()
+        {
+            skillWindow.SetActive(false);
+            Debug.Log("OnClickSelectSkillCHandler");
+
+            PlayerBase playerBase = m_selectedUnit.gameObject.GetComponent<PlayerBase>();
+            playerBase.BeforePlaySkill2();
+            m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
+        }
+        private void OnClickSelectSkillDHandler()
+        {
+            skillWindow.SetActive(false);
+            Debug.Log("OnClickSelectSkillDHandler");
+
+            PlayerBase playerBase = m_selectedUnit.gameObject.GetComponent<PlayerBase>();
+            playerBase.BeforePlaySkill3();
+            m_selectedUnit.PushTask(new SkillTask(playerBase, playerBase.curSkill));
+        }
+
         private void OnClickPlayHandler()
         {
             if (step == 3)
