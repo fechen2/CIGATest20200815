@@ -142,9 +142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c3698ac9ca577478546fe2cb8d2873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curHP: 100
-  AttackValue: 10
-  DefendVal: 2
+  curHP: 4
+  AttackValue: 1
+  DefendVal: 0
   MagicVal: 20
   Speed: 1
   curMoveEnergy: 1
@@ -167,6 +167,8 @@ MonoBehaviour:
   zuZhouGetBegin_BigTime: 0
   zuZhouGet_skillReleaseBigTime: 0
   hpText: {fileID: 0}
+  curHpText: {fileID: 0}
+  isDead: 0
   isYinShenTrigger: 0
   yinShenBegin_BigTime: 0
   yinShen_canMoveBigTime: 0
