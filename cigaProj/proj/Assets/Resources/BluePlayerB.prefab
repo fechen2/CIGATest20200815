@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 2480223309531045654}
   - component: {fileID: 6717561969772219904}
   - component: {fileID: 8725937546668202211}
-  - component: {fileID: -2603395484129269868}
   m_Layer: 9
-  m_Name: BluePlayer
+  m_Name: BluePlayerB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,20 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   index: 0
+  unitType: 1
   speed: 5
   campType: 0
   ability: 3
---- !u!114 &-2603395484129269868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3268282528999309499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d5fa66e8b11574999b551701b61c27, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_pathVectors: []
-  isMoving: 0

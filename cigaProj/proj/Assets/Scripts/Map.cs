@@ -70,9 +70,9 @@ namespace GameLogic.Lua
 
 		public GameObject blackBox;
 
-		public GameObject bluePlayerPrefab;
+		//public GameObject bluePlayerPrefab;
 
-		public GameObject redPlayerPrefab;
+		//public GameObject redPlayerPrefab;
 
 		private Grid2D<Tile> m_grid;
 
@@ -220,15 +220,19 @@ namespace GameLogic.Lua
 		/// </summary>
 		private void GeneraterRole(Vector2Int[] blueCamps, Vector2Int[] redCamps)
 		{
+			string[] suffs = new string[3] { "A", "B", "C" };
+
 			for (int i = 0; i < blueCamps.Length; i++)
 			{
-				m_angent = GameObject.Instantiate(bluePlayerPrefab);
+				GameObject prefab = Resources.Load("BluePlayer" + suffs[i]) as GameObject;
+				m_angent = GameObject.Instantiate(prefab);
 				m_angent.transform.position = blueCamps[i].ToVector3(1.5f);
 				Unit unit = m_angent.GetComponent<Unit>();
 				unit.Init(blueCamps[i]);
 				unit.index = GetIndex(blueCamps[i]);
 				unit.campType = CampType.LEFT;
 				unit.uniqueId = (CampType.LEFT.ToString() + i.ToString());
+				m_angent.name = unit.uniqueId;
 				Stack<Unit> stackUnits = new Stack<Unit>();
 				stackUnits.Push(unit);
 				m_units.Add(unit.uniqueId, stackUnits);
@@ -236,13 +240,15 @@ namespace GameLogic.Lua
 
 			for (int i = 0; i < redCamps.Length; i++)
 			{
-				m_angent = GameObject.Instantiate(redPlayerPrefab);
+				GameObject prefab = Resources.Load("RedPlayer" + suffs[i]) as GameObject;
+				m_angent = GameObject.Instantiate(prefab);
 				m_angent.transform.position = redCamps[i].ToVector3(1.5f);
 				Unit unit = m_angent.GetComponent<Unit>();
 				unit.Init(redCamps[i]);
 				unit.index = GetIndex(redCamps[i]);
 				unit.campType = CampType.RIGHT;
 				unit.uniqueId = (CampType.RIGHT.ToString() + i.ToString());
+				m_angent.name = unit.uniqueId;
 				Stack<Unit> stackUnits = new Stack<Unit>();
 				stackUnits.Push(unit);
 				m_units.Add(unit.uniqueId, stackUnits);
