@@ -32,14 +32,9 @@ namespace GameRisker.BasicLib.Event
                         temps.RemoveAt(0);
                         try
                         {
-#if UNITY_EDITOR
                                 {
                                     handler(data);
                                 }
-#else
-                                if (data != null) data.position = 0;
-                                handler(data);
-#endif
                         }
                         catch (Exception e)
                         {
